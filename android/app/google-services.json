@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "920326783426",
+    "project_id": "my-stacked-app",
+    "storage_bucket": "my-stacked-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920326783426:android:7987bcd95efc8acb07d65b",
+        "android_client_info": {
+          "package_name": "com.example.my_first_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAct6HqBreZUrL_2fpg-q8pFvYFCjeQSd0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920326783426:android:939ffe3369f3fa6d07d65b",
+        "android_client_info": {
+          "package_name": "com.example.my_stacked_app2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAct6HqBreZUrL_2fpg-q8pFvYFCjeQSd0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
