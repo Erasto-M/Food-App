@@ -12,6 +12,7 @@ import 'package:my_stacked_app2/ui/views/notifications/notifications_view.dart';
 import 'package:my_stacked_app2/ui/views/add_food/add_food_view.dart';
 import 'package:my_stacked_app2/services/dashboard_service.dart';
 import 'package:my_stacked_app2/services/firebasecloud_service.dart';
+import 'package:my_stacked_app2/ui/views/details/details_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -23,6 +24,7 @@ import 'package:my_stacked_app2/services/firebasecloud_service.dart';
     MaterialRoute(page: ProfileView),
     MaterialRoute(page: NotificationsView),
     MaterialRoute(page: AddFoodView),
+    MaterialRoute(page: DetailsView),
 // @stacked-route
   ],
   dependencies: [

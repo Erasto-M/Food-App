@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -58,7 +59,7 @@ class AddFoodView extends StackedView<AddFoodViewModel> with $AddFoodView {
                         hintText: "Food Name",
                         prefixIcon: const Icon(Icons.food_bank),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                     ),
@@ -80,7 +81,7 @@ class AddFoodView extends StackedView<AddFoodViewModel> with $AddFoodView {
                         ),
                         prefixIcon: const Icon(Icons.category),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                     ),
@@ -91,7 +92,7 @@ class AddFoodView extends StackedView<AddFoodViewModel> with $AddFoodView {
                         hintText: "Price ",
                         prefixIcon: const Icon(Icons.money),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                     ),
@@ -102,7 +103,7 @@ class AddFoodView extends StackedView<AddFoodViewModel> with $AddFoodView {
                         hintText: "Description",
                         prefixIcon: const Icon(Icons.description),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                     ),
@@ -113,7 +114,7 @@ class AddFoodView extends StackedView<AddFoodViewModel> with $AddFoodView {
                         hintText: "Quantity",
                         prefixIcon: const Icon(Icons.add_shopping_cart),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                     ),
@@ -124,7 +125,7 @@ class AddFoodView extends StackedView<AddFoodViewModel> with $AddFoodView {
                         hintText: "Delivery Cost",
                         prefixIcon: const Icon(Icons.delivery_dining),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                     ),
@@ -141,7 +142,7 @@ class AddFoodView extends StackedView<AddFoodViewModel> with $AddFoodView {
                         hintText: "Delivery Time",
                         prefixIcon: const Icon(Icons.timer),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                     ),
@@ -158,7 +159,7 @@ class AddFoodView extends StackedView<AddFoodViewModel> with $AddFoodView {
                           color: Colors.orange,
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                     ),
@@ -171,17 +172,29 @@ class AddFoodView extends StackedView<AddFoodViewModel> with $AddFoodView {
                       style: TextStyle(fontSize: 18),
                     )),
                     verticalSpaceTiny,
-                    Container(
-                      height: 150,
-                      width: 150,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.camera_alt,
-                          size: 50,
+                    GestureDetector(
+                      onTap: () {
+                        viewModel.pickImage();
+                      },
+                      child: Container(
+                        height: 150,
+                        width: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          image: DecorationImage(
+                            image: viewModel.imageFile != null
+                                ? FileImage(viewModel.imageFile!)
+                                : const AssetImage('assets/burger.png')
+                                    as ImageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.camera_alt,
+                            size: 50,
+                          ),
                         ),
                       ),
                     ),
@@ -194,10 +207,10 @@ class AddFoodView extends StackedView<AddFoodViewModel> with $AddFoodView {
                         : InkWell(
                             onTap: () {
                               viewModel.addFoodDetails(
-                                FoodDetailsModel(
+                                foodDetailsModel: FoodDetailsModel(
                                   category: categoryController.text,
                                   name: nameController.text,
-                                  imageUrl: '',
+                                  imageUrl: viewModel.imageLink,
                                   price: priceController.text,
                                   description: descriptionController.text,
                                   rating: ratingController.text,
@@ -205,6 +218,7 @@ class AddFoodView extends StackedView<AddFoodViewModel> with $AddFoodView {
                                   deliveryCost: deliveryCostController.text,
                                   quantity: quantityController.text,
                                 ),
+                                foodImageUrl: viewModel.imageUrl!,
                               );
                             },
                             child: Container(

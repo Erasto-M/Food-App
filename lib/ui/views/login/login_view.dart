@@ -147,7 +147,7 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                             child: Container(
                               width: MediaQuery.of(context).size.width,
                               padding: const EdgeInsets.symmetric(
-                                  vertical: 20, horizontal: 120),
+                                  vertical: 20, horizontal: 100),
                               decoration: BoxDecoration(
                                 color: Colors.black,
                                 borderRadius: BorderRadius.circular(30),
@@ -155,12 +155,14 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                               child: const Center(
                                 child: Row(
                                   children: [
-                                    Text(
-                                      "Login",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
+                                    Center(
+                                      child: Text(
+                                        "Login",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
                                       ),
                                     ),
                                     horizontalSpaceSmall,

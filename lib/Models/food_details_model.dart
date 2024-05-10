@@ -78,12 +78,12 @@ class FoodDetailsModel {
       category: (map["category"] ?? '') as String,
       name: (map["name"] ?? '') as String,
       imageUrl: (map["imageUrl"] ?? '') as String,
-      price: (map["price"] ?? '') as String,
+      price: (map['price'] ?? 0) as String,
       description: (map["description"] ?? '') as String,
-      rating: (map["rating"] ?? '') as String,
-      deliveryTime: (map["deliveryTime"] ?? '') as String,
-      deliveryCost: (map["deliveryCost"] ?? '') as String,
-      quantity: (map["quantity"] ?? '') as String,
+      rating: (map['rating'] ?? 0) as String,
+      deliveryTime: (map["deliveryTime"] ?? 0) as String,
+      deliveryCost: (map["deliveryCost"] ?? 0) as String,
+      quantity: (map["quantity"] ?? 0) as String,
     );
   }
 }

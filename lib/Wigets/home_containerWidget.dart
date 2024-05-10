@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_stacked_app2/Models/food_details_model.dart';
 import 'package:my_stacked_app2/ui/common/ui_helpers.dart';
+import 'package:my_stacked_app2/ui/views/details/details_view.dart';
 import 'package:my_stacked_app2/ui/views/home/home_view.form.dart';
 import 'package:my_stacked_app2/ui/views/home/home_viewmodel.dart';
 import 'package:stacked/stacked_annotations.dart';
@@ -115,7 +118,7 @@ class HomeScreenWidget extends StatelessWidget with $HomeView {
                 ),
                 child: const Center(
                   child: Icon(
-                    Icons.filter_list,
+                    Icons.shopping_cart,
                     color: Colors.white,
                     size: 25,
                   ),
@@ -138,7 +141,7 @@ class HomeScreenWidget extends StatelessWidget with $HomeView {
                     width: 100,
                     decoration: BoxDecoration(
                       color: index == 0
-                          ? Color.fromARGB(255, 186, 233, 15)
+                          ? const Color.fromARGB(255, 186, 233, 15)
                           : Colors.white,
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -166,101 +169,145 @@ class HomeScreenWidget extends StatelessWidget with $HomeView {
             height: 5,
           ),
           Expanded(
-            child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                ),
-                itemCount: 12,
-                itemBuilder: (context, index) {
-                  return Container(
-                    height: MediaQuery.of(context).size.height / 2,
-                    width: MediaQuery.of(context).size.width / 2.2,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: const Color.fromARGB(255, 248, 19, 2),
+              child: StreamBuilder(
+            stream: homeViewModel.getAllFoods(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                    child: SpinKitSpinningLines(
+                  color: Colors.black,
+                  size: 80,
+                ));
+              } else if (!snapshot.hasData) {
+                return const Text("No Foods found");
+              } else if (snapshot.hasError) {
+                return Text("Error: ${snapshot.error}");
+              } else {
+                final data = snapshot.data;
+                return GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 5,
+                      mainAxisSpacing: 5,
                     ),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height / 8,
-                          decoration: const BoxDecoration(
-                              color: Colors.white,
-                              image: DecorationImage(
-                                  image: AssetImage('assets/burger.png'),
-                                  fit: BoxFit.cover),
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(25),
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20),
-                                bottomRight: Radius.circular(25),
-                              )),
-                        ),
-                        Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          child: Row(
+                    itemCount: data.docs.length,
+                    itemBuilder: (context, index) {
+                      final doc = data.docs[index];
+                      final docData = doc.data() as Map<String, dynamic>;
+                      FoodDetailsModel foodModel =
+                          FoodDetailsModel.fromMap(docData);
+                      double price = double.parse(foodModel.price);
+                      double rating = double.parse(foodModel.rating);
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => DetailsView(
+                                category: foodModel.category,
+                                imageUrl: foodModel.imageUrl,
+                                deliveryCost: foodModel.deliveryCost,
+                                deliveryTime: foodModel.deliveryTime,
+                                foodName: foodModel.name,
+                                foodDescription: foodModel.description,
+                                foodPrice: foodModel.price,
+                                rating: foodModel.rating,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          height: MediaQuery.of(context).size.height / 2,
+                          width: MediaQuery.of(context).size.width / 2.2,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: const Color.fromARGB(255, 248, 19, 2),
+                          ),
+                          child: Column(
                             children: [
-                              // name and rating column
-                              const Column(
-                                children: [
-                                  Text(
-                                    "Burger",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.star,
-                                        color: Colors.grey,
-                                      ),
-                                      SizedBox(
-                                        width: 2,
-                                      ),
-                                      Text(
-                                        "4.5",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                              const Spacer(),
-                              // cost column
-                              Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      const SizedBox(
-                                        width: 2,
-                                      ),
-                                      Text(
-                                        NumberFormat.currency(
-                                                symbol: '\$', decimalDigits: 0)
-                                            .format(2.5),
-                                        style: const TextStyle(
-                                            color: Colors.white),
-                                      )
-                                    ],
-                                  ),
-                                  const Icon(
-                                    Icons.add,
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height / 8,
+                                decoration: BoxDecoration(
                                     color: Colors.white,
-                                  ),
-                                ],
+                                    image: DecorationImage(
+                                        image: NetworkImage(foodModel.imageUrl),
+                                        fit: BoxFit.cover),
+                                    borderRadius: const BorderRadius.only(
+                                      bottomLeft: Radius.circular(25),
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20),
+                                      bottomRight: Radius.circular(25),
+                                    )),
                               ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                child: Row(
+                                  children: [
+                                    // name and rating column
+                                    Column(
+                                      children: [
+                                        Text(
+                                          foodModel.name,
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.star,
+                                              color: Colors.orange,
+                                            ),
+                                            const SizedBox(
+                                              width: 2,
+                                            ),
+                                            Text(
+                                              rating.toString(),
+                                              style: const TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                    const Spacer(),
+                                    // cost column
+                                    Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const SizedBox(
+                                              width: 2,
+                                            ),
+                                            Text(
+                                              NumberFormat.currency(
+                                                      symbol: '\$',
+                                                      decimalDigits: 0)
+                                                  .format(price),
+                                              style: const TextStyle(
+                                                  color: Colors.white),
+                                            )
+                                          ],
+                                        ),
+                                        const Icon(
+                                          Icons.add,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )
                             ],
                           ),
-                        )
-                      ],
-                    ),
-                  );
-                }),
-          )
+                        ),
+                      );
+                    });
+              }
+            },
+          )),
         ],
       ),
     );

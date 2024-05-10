@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:my_stacked_app2/Models/food_details_model.dart';
 import 'package:my_stacked_app2/app/app.locator.dart';
@@ -15,6 +19,10 @@ class AddFoodViewModel extends FormViewModel {
 
   // timepicker variable
   DateTime? time;
+  File? imageFile;
+  get image => imageFile;
+  String? imageUrl;
+  get imageLink => imageUrl;
 
   // getter to get the time value
   get timeValue => time;
@@ -93,7 +101,10 @@ class AddFoodViewModel extends FormViewModel {
   }
 
   // method to handle adding food details
-  Future<void> addFoodDetails(FoodDetailsModel foodDetailsModel) async {
+  Future<void> addFoodDetails({
+    required foodDetailsModel,
+    required String foodImageUrl,
+  }) async {
     setBusy(true);
     if (nameValue!.isEmpty ||
         nameValue! == '' ||
@@ -127,9 +138,85 @@ class AddFoodViewModel extends FormViewModel {
         foodDeliveryCost: deliveryCostValue!,
         foodQuantity: quantityValue!,
         foodDetailsModel: foodDetailsModel,
+        foodImageUrl: foodImageUrl!,
       );
+      //clear all the textfields
+
       notifyListeners();
     }
     setBusy(false);
+  }
+
+  // Pick Image Method
+  Future<void> pickImage() async {
+    final pickedImage = await _dialogService.showConfirmationDialog(
+      title: 'Pick Image',
+      description: 'Choose an image from',
+      confirmationTitle: 'Gallery',
+      cancelTitle: 'Camera',
+    );
+    if (pickedImage?.confirmed == true) {
+      await getImageFromGallery();
+      notifyListeners();
+    } else {
+      await getImageFromCamera();
+      notifyListeners();
+    }
+  }
+
+  // get image from gallery function
+  Future getImageFromGallery() async {
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    try {
+      if (pickedImage != null) {
+        imageFile = File(pickedImage.path);
+        // send the image to firebase storange
+        FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+        Reference reference = firebaseStorage
+            .ref()
+            .child('food_images/${DateTime.now().toString()}');
+        UploadTask uploadTask = reference.putFile(
+          File(pickedImage.path),
+        );
+        TaskSnapshot taskSnapshot = await uploadTask;
+        // get downloadurl
+        imageUrl = await taskSnapshot.ref.getDownloadURL();
+        notifyListeners();
+        print('Image Path: ${pickedImage.path}');
+        print('Image Url: $imageUrl');
+      } else {
+        print('No Image Selected');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //pick image from camera
+  Future getImageFromCamera() async {
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    try {
+      if (pickedImage != null) {
+        imageFile = File(pickedImage.path);
+        // send the image to firebase storange
+        FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+        Reference reference = firebaseStorage
+            .ref()
+            .child('food_images/${DateTime.now().toString()}');
+        UploadTask uploadTask = reference.putFile(File(pickedImage.path));
+        TaskSnapshot taskSnapshot = await uploadTask;
+        // get downloadurl
+        imageUrl = await taskSnapshot.ref.getDownloadURL();
+        notifyListeners();
+        print('Image Path: ${pickedImage.path}');
+        print('Image Url: $imageUrl');
+      } else {
+        print('No Image Selected');
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

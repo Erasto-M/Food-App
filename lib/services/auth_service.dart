@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_stacked_app2/app/app.locator.dart';
 import 'package:my_stacked_app2/app/app.router.dart';
+import 'package:my_stacked_app2/ui/views/home/home_view.dart';
+import 'package:my_stacked_app2/ui/views/login/login_view.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class AuthService {
@@ -103,4 +106,15 @@ class AuthService {
   // check auth state changes
   Stream<User?> get authStateChanges =>
       FirebaseAuth.instance.authStateChanges();
+
+  //Method for getting the current user
+  getCurrentUser() async {
+    return FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        _navigationService.navigateToLoginView();
+      } else {
+        _navigationService.navigateToHomeView();
+      }
+    });
+  }
 }

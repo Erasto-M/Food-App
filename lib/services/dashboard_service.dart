@@ -17,6 +17,7 @@ class DashboardService {
     required String foodDeliveryTime,
     required String foodDeliveryCost,
     required String foodQuantity,
+    required String foodImageUrl,
     required FoodDetailsModel foodDetailsModel,
   }) async {
     try {
@@ -33,5 +34,11 @@ class DashboardService {
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
     }
+  }
+
+  // Fetch all food details from firebase
+  Stream<QuerySnapshot> fetchAllFoodDetails() {
+    CollectionReference foodDetailsDB = firestore.collection("Foods");
+    return foodDetailsDB.snapshots();
   }
 }
